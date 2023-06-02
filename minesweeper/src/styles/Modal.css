@@ -1,0 +1,47 @@
+.modal {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    row-gap: 1vw;
+}
+
+  #gameOverImage {
+    background: #4dc1f9 url("./pictures/game_over.png") center bottom no-repeat;
+    width: 25%;
+    height: 50%;
+    border-radius: 8px;
+    background-size: contain;
+  }
+
+  .stats {
+    padding-top: 20px;
+    font-size: xx-large;
+    color: white;
+    font-weight: 550;
+  }
+
+  .icon {
+    padding-right: 10px;
+    padding-top: 15px;
+  }
+
+  .try-again {
+    cursor: pointer;
+    width: 24%;
+    border-radius: 7px;
+    background: #4a752c;
+    color: white;
+    padding: 10px;
+    font-size: x-large;
+    font-weight: 530;
+  }
+
+  .again {
+    color: white;
+    padding-right: 10px;
+  }

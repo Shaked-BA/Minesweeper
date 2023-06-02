@@ -1,9 +1,19 @@
 .cell {
     width: 40px;
     height: 40px;
-    border: 2px solid red;
-    background: gray;
     display: flex;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
+    font-size: 25px;
+    font-weight: 800px;
+}
+
+.flag {
+    color: red;
+}
+
+.bomb {
+    color: black;
+    opacity: 0.6;
 }

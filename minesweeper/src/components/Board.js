@@ -1,49 +1,61 @@
 import { useEffect, useState } from 'react';
 
-import '../styles/Board.css' ;
-import { initBoard } from '../utils/boardUtils';
+import '../styles/Board.css';
+import { initBoard, updateNeighbors, revealMines, countHiddenCells } from '../utils/boardUtils';
 import Cell from './Cell';
 
-function Board() {
-    const [cells, setCells] = useState([]);
+function Board({gameOver, setGameOver, setHiddenCells}) {
+    const [board, setBoard] = useState({cells: [], minesPositions: []});
 
-    useEffect(() => setCells(initBoard()), []);
+    useEffect(() => {
+        const { cells, minesPositions } = initBoard();
+        setBoard({ cells, minesPositions });
+    }, []);
 
     const updateFlag = (e, x, y) => {
         e.preventDefault();
-        const newCells = JSON.parse(JSON.stringify(cells));
-        newCells[x][y].flagged = true;
-        setCells(newCells);
+        if (!gameOver) {
+            const cells = JSON.parse(JSON.stringify(board.cells));
+            cells[x][y].flagged = !cells[x][y].flagged;
+            setBoard(prevBoard => {return {...prevBoard, cells}});
+        }
+    }
+
+    const finishGame = () => {
+        const cells = revealMines(JSON.parse(JSON.stringify(board)));
+        setBoard(prevBoard => {return {...prevBoard, cells}});
+        setGameOver(true);
     }
 
     const updateRevealed = (x, y) => {
-        if (cells[x][y].value === 'X') {
-            alert("Game Over!");
-        }
-        const newCells = updateRevealedCell(x, y, JSON.parse(JSON.stringify(cells)));
-        setCells(newCells);
-    }
-
-    const updateRevealedCell = (x, y, newCells) => {
-        newCells[x][y].revealed = true;
-        if (newCells[x][y].value === '') {
-            const neighbors = newCells[x][y].neighbors;
-            for (let i = 0; i < neighbors.length; i++) {
-                if (!newCells[neighbors[i].x][neighbors[i].y].revealed) {
-                    updateRevealedCell(neighbors[i].x, neighbors[i].y, newCells);
-                }
+        if (!gameOver) {
+            if (board.cells[x][y].value === 'X') {
+                finishGame();
+            } else {
+                const cells = updateNeighbors(x, y, JSON.parse(JSON.stringify(board.cells)));
+                setBoard(prevBoard => {return {...prevBoard, cells}});
+                updateHiddenCells(cells);
             }
         }
-        return newCells;
+    }
+
+    const updateHiddenCells = (cells) => {
+        const newHiddenCells = countHiddenCells(cells);
+        if (newHiddenCells === 0) {
+            setGameOver(true);
+        }
+        setHiddenCells(newHiddenCells);
     }
 
     return (
-        <div className="board">
-            {cells.map((row, i) => 
-            <div key={i}>
-                {row.map((cell, j) => <Cell key={j} cellProps={cell} updateFlag={updateFlag} updateRevealed={updateRevealed} />)}
+        <div>
+            <div className="board">
+                {board.cells.map((row, i) => 
+                <div className="row" key={i}>
+                    {row.map(
+                        (cell, j) => <Cell key={j} cellProps={cell} updateFlag={updateFlag} updateRevealed={updateRevealed} />)}
+                </div>)}
             </div>
-            )}
         </div>
     );
 }
